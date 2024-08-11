@@ -1,28 +1,47 @@
-import conditions from '../conditions'
-import { ISpinParams } from '../../../types'
+import { ISpinParams } from '../../../types';
+import conditions from '../conditions';
 
 /**
- * @param {ISpinParams} params
+ * Checks if all conditions are met and executes a function if they are.
+ * @param {ISpinParams} params - The parameters used for checking conditions and executing the function.
  */
 function check(params: ISpinParams): void {
-  const { settings, agentDI } = params
-  const { [agentDI.glossary.finalizerTypes.FUNCTION]: config } =
-    settings.finalizer
-  if (isEnable()) {
-    config.fn(params)
+  try {
+    const { settings, agentDI } = params;
+    const config = settings.finalizer[agentDI.glossary.finalizerTypes.FUNCTION];
+
+    if (!config || !config.fn || !Array.isArray(config.conditions)) {
+      throw new Error('Invalid finalizer configuration.');
+    }
+
+    if (areConditionsMet(config.conditions)) {
+      config.fn(params);
+    }
+  } catch (error) {
+    console.error('Error in check function:', error);
   }
 
-  function isEnable(): boolean {
-    let result = true
-    for (const conditionType of config.conditions) {
-      result = result && conditions[conditionType](params)
-      if (!result) {
-        return result
+  /**
+   * Checks if all conditions specified in the configuration are met.
+   * @param {string[]} conditionsList - List of condition types to check.
+   * @returns {boolean} - True if all conditions are met, false otherwise.
+   */
+  function areConditionsMet(conditionsList: string[]): boolean {
+    return conditionsList.every(conditionType => {
+      const conditionFn = conditions[conditionType];
+      if (typeof conditionFn !== 'function') {
+        console.warn(`Condition function for type "${conditionType}" is not defined.`);
+        return false;
       }
-    }
-    return result
+      try {
+        return conditionFn(params);
+      } catch (error) {
+        console.error(`Error evaluating condition "${conditionType}":`, error);
+        return false;
+      }
+    });
   }
 }
 
 /** @type {FinalizerInterface} */
-export default { check }
+export default { check };

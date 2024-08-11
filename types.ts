@@ -1,28 +1,49 @@
+type Worker = {
+  run: (params: ISpinParams) => void;
+};
+
 export type ISpinParams = {
-  mode?: string
-  settings?: any
-  args?: Record<string, any>
-  agentDI?: any
-  multiplier?: number
-  credit?: number
-  size?: number[]
-  strips?: string[]
-  stops?: number[]
-  reels?: string[]
-  layout?: any
-  matrix?: string[]
-  win?: any
-  features?: any
-  cheats?: string
-  enable?: boolean
-  predefined?: any
-  specialSymbols?: string[]
-  parent?: string
-  finalizer?: any
-  winPayouts?: any
-  blockedWinPatterns?: string[]
-  buy?: boolean
-  contexts?: any
+  mode?: string;
+  settings?: Record<string, any>;
+  args?: Record<string, any>;
+  agentDI?: {
+    injector?: any;
+    finalizer?: any;
+    featurer?: any;
+    stats?: any;
+    glossary?: {
+      finalizerTypes?: {
+        [key: string]: string;
+      };
+    };
+    worker?: Worker;
+  };
+  multiplier?: number;
+  credit?: number;
+  size?: number[];
+  strips?: string[];
+  stops?: number[];
+  reels?: string[];
+  layout?: Record<string, any>;
+  matrix?: string[];
+  win?: {
+    total?: number;
+    [key: string]: any;
+  };
+  features?: {
+    finished?: boolean;
+    [key: string]: any;
+  };
+  cheats?: string;
+  enable?: boolean;
+  predefined?: Record<string, any>;
+  specialSymbols?: string[];
+  parent?: string;
+  finalizer?: Record<string, any>;
+  winPayouts?: Record<string, any>;
+  blockedWinPatterns?: string[];
+  buy?: boolean;
+  contexts?: Record<string, any>;
 }
 
 export type ModeParams = Partial<ISpinParams>
@@ -35,4 +56,4 @@ export type InjectionToPatternItem = {
 
 export type ModulesInjectiveFunctions = Function[]
 
-export type InjectionToRoundState = any
+export type InjectionToRoundState = Record<string, any>;

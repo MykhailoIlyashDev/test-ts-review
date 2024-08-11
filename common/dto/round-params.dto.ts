@@ -1,7 +1,7 @@
 export class RoundParamsDto {
-    someArgs: string
+  someArgs: string;
 
-  constructor(data: Partial<RoundParamsDto>) {
-    Object.assign(this, data)
+  constructor(data: Partial<RoundParamsDto> = {}) {
+    Object.assign(this, data);
   }
 }

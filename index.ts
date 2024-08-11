@@ -1,14 +1,22 @@
-import "reflect-metadata"
+import 'reflect-metadata';
+import { exit } from 'process';
 
-import { RoundService } from './round.service'
-import { RoundParamsDto } from './common/dto/round-params.dto'
-import * as process from 'node:process'
+import { RoundParamsDto } from './common/dto/round-params.dto';
+import { RoundService } from './round.service';
 
-const roundService = new RoundService()
+async function main() {
+  try {
+    const roundService = new RoundService();
+    const roundParams = new RoundParamsDto({});
 
+    const result = await roundService.go(roundParams);
 
-const res = roundService.go(new RoundParamsDto({}))
+    console.log(result);
+  } catch (error) {
+    console.error('An error occurred:', error);
+  } finally {
+    exit(0);
+  }
+}
 
-console.log(res)
-process.exit(0)
-
+main();
